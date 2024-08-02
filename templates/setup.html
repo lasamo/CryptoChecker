@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoChecker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 50px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 400px;
+        }
+        .btn-mint-green {
+            background-color: #98ff98; /* Mint green */
+            border-color: #98ff98;
+        }
+        .btn-mint-green:hover {
+            background-color: #7dff7d; /* Darker mint green on hover */
+            border-color: #7dff7d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">CryptoChecker</h1>
+        <form action="/setup" method="post" class="mt-4">
+            <div class="form-group">
+                <label for="api_key">Insert your API Key:</label>
+                <input type="password" id="api_key" name="api_key" class="form-control" placeholder="Enter your API key" required>
+            </div>
+            <button type="submit" class="btn btn-mint-green btn-block">Submit</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
