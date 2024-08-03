@@ -11,7 +11,7 @@
             background-color: #f8f9fa;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
         }
         .response-container {
             margin-top: 20px;
@@ -29,8 +29,12 @@
             white-space: pre-wrap;
             overflow-wrap: break-word;
         }
-        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
-            background-color: #98ff98;
+        .pdf-export-container {
+            margin: 20px 0; /* Add space above and below the button */
+            text-align: center;
+        }
+        .pdf-export-button {
+            margin: 20px 0; /* Additional spacing around the button */
         }
     </style>
 </head>
@@ -39,28 +43,25 @@
         <h1 class="text-center">CryptoChecker</h1>
         <form action="/submit" method="post" class="text-center">
             <div class="form-group">
-                <input type="text" name="address" class="form-control" placeholder="Enter addresses separated by commas" required>
+                <input type="text" name="address" class="form-control" placeholder="Addresses to check (comma separated)" required>
             </div>
             <button type="submit" class="btn btn-mint-green">Submit</button>
         </form>
 
+        {% if results %}
         <div class="response-container">
-            {% if results %}
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 {% for result in results %}
                 <li class="nav-item">
-                    <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index0 }}-tab" data-toggle="tab" href="#tab-{{ loop.index0 }}" role="tab" aria-controls="tab-{{ loop.index0 }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ result.address[:3] }}...</a>
+                    <a class="nav-link{% if loop.first %} active{% endif %}" id="tab-{{ loop.index }}" data-toggle="tab" href="#content-{{ loop.index }}" role="tab" aria-controls="content-{{ loop.index }}" aria-selected="true">
+                        {{ result.address[:3] }}...
+                    </a>
                 </li>
                 {% endfor %}
             </ul>
             <div class="tab-content" id="myTabContent">
                 {% for result in results %}
-                <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="tab-{{ loop.index0 }}" role="tabpanel" aria-labelledby="tab-{{ loop.index0 }}-tab">
-                    {% if result.error %}
-                    <div class="alert alert-danger mt-4" role="alert">
-                        {{ result.error }}
-                    </div>
-                    {% else %}
+                <div class="tab-pane fade{% if loop.first %} show active{% endif %}" id="content-{{ loop.index }}" role="tabpanel" aria-labelledby="tab-{{ loop.index }}">
                     <div class="card mt-4">
                         <div class="card-header">
                             Crypto Address
@@ -93,26 +94,27 @@
                             <a href="{{ result.url }}" target="_blank">{{ result.url }}</a>
                         </div>
                     </div>
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            Raw JSON Response
-                        </div>
-                        <div class="card-body">
-                            <pre>{{ result.raw | tojson(indent=2) }}</pre>
-                        </div>
+                    <!-- Export to PDF button -->
+                    <div class="pdf-export-container">
+                        <form action="/export" method="post" class="pdf-export-button">
+                            <input type="hidden" name="address" value="{{ result.address }}">
+                            <input type="hidden" name="name" value="{{ result.name }}">
+                            <input type="hidden" name="description" value="{{ result.description }}">
+                            <input type="hidden" name="url" value="{{ result.url }}">
+                            <button type="submit" class="btn btn-mint-green">Export to PDF</button>
+                        </form>
                     </div>
-                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
-            {% endif %}
-
-            {% if error %}
-            <div class="alert alert-danger mt-4" role="alert">
-                {{ error }}
-            </div>
-            {% endif %}
         </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="alert alert-danger mt-4" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
