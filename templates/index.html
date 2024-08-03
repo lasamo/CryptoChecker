@@ -24,6 +24,11 @@
             background-color: #7dff7d; /* Darker mint green on hover */
             border-color: #7dff7d;
         }
+        .card-body pre {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+        }
     </style>
 </head>
 <body>
@@ -40,7 +45,39 @@
             {% if data %}
             <div class="card mt-4">
                 <div class="card-header">
-                    Response
+                    Crypto Address
+                </div>
+                <div class="card-body">
+                    <pre>{{ address }}</pre>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">
+                    Name
+                </div>
+                <div class="card-body">
+                    <pre>{{ name }}</pre>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">
+                    Description
+                </div>
+                <div class="card-body">
+                    <pre>{{ description }}</pre>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">
+                    URL
+                </div>
+                <div class="card-body">
+                    <a href="{{ url }}" target="_blank">{{ url }}</a>
+                </div>
+            </div>
+            <div class="card mt-4">
+                <div class="card-header">
+                    Raw JSON Response
                 </div>
                 <div class="card-body">
                     <pre>{{ data | tojson(indent=2) }}</pre>
