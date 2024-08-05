@@ -82,6 +82,7 @@ def export_pdf():
     story = []
 
     for address, name, description, url in zip(addresses, names, descriptions, urls):
+        print(description)
         story.append(Paragraph(f"Crypto Address: {address}\n", title_style))
         story.append(Paragraph(f"Name: {name}\n", header_style))
         story.append(Paragraph(f"Description: {description}\n", body_style))
