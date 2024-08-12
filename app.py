@@ -98,4 +98,4 @@ def export_pdf():
     return Response(pdf_data, mimetype='application/pdf', headers={"Content-Disposition": f"attachment;filename=report_address_{address[:10]}.pdf"})
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000)
