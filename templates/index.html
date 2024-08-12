@@ -29,6 +29,9 @@
             white-space: pre-wrap;
             overflow-wrap: break-word;
         }
+        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+            background-color: #98ff98;
+        }
     </style>
 </head>
 <body>
@@ -36,52 +39,71 @@
         <h1 class="text-center">CryptoChecker</h1>
         <form action="/submit" method="post" class="text-center">
             <div class="form-group">
-                <input type="text" name="address" class="form-control" placeholder="Address to check" required>
+                <input type="text" name="address" class="form-control" placeholder="Enter addresses separated by commas" required>
             </div>
             <button type="submit" class="btn btn-mint-green">Submit</button>
         </form>
 
         <div class="response-container">
-            {% if data %}
-            <div class="card mt-4">
-                <div class="card-header">
-                    Crypto Address
+            {% if results %}
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                {% for result in results %}
+                <li class="nav-item">
+                    <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index0 }}-tab" data-toggle="tab" href="#tab-{{ loop.index0 }}" role="tab" aria-controls="tab-{{ loop.index0 }}" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ result.address[:3] }}...</a>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                {% for result in results %}
+                <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="tab-{{ loop.index0 }}" role="tabpanel" aria-labelledby="tab-{{ loop.index0 }}-tab">
+                    {% if result.error %}
+                    <div class="alert alert-danger mt-4" role="alert">
+                        {{ result.error }}
+                    </div>
+                    {% else %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            Crypto Address
+                        </div>
+                        <div class="card-body">
+                            <pre>{{ result.address }}</pre>
+                        </div>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            Name
+                        </div>
+                        <div class="card-body">
+                            <pre>{{ result.name }}</pre>
+                        </div>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            Description
+                        </div>
+                        <div class="card-body">
+                            <pre>{{ result.description }}</pre>
+                        </div>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            URL
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ result.url }}" target="_blank">{{ result.url }}</a>
+                        </div>
+                    </div>
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            Raw JSON Response
+                        </div>
+                        <div class="card-body">
+                            <pre>{{ result.raw | tojson(indent=2) }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="card-body">
-                    <pre>{{ address }}</pre>
-                </div>
-            </div>
-            <div class="card mt-4">
-                <div class="card-header">
-                    Name
-                </div>
-                <div class="card-body">
-                    <pre>{{ name }}</pre>
-                </div>
-            </div>
-            <div class="card mt-4">
-                <div class="card-header">
-                    Description
-                </div>
-                <div class="card-body">
-                    <pre>{{ description }}</pre>
-                </div>
-            </div>
-            <div class="card mt-4">
-                <div class="card-header">
-                    URL
-                </div>
-                <div class="card-body">
-                    <a href="{{ url }}" target="_blank">{{ url }}</a>
-                </div>
-            </div>
-            <div class="card mt-4">
-                <div class="card-header">
-                    Raw JSON Response
-                </div>
-                <div class="card-body">
-                    <pre>{{ data | tojson(indent=2) }}</pre>
-                </div>
+                {% endfor %}
             </div>
             {% endif %}
 

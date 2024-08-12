@@ -15,7 +15,6 @@ def index():
 def setup():
     if request.method == 'POST':
         session['api_key'] = request.form['api_key']
-        print("METHOD WAS POST, API KEY IS : {}".format(session['api_key']))
         return redirect(url_for('index'))
     return render_template('setup.html')
 
@@ -25,36 +24,29 @@ def submit():
         return redirect(url_for('setup'))
 
     api_key = session['api_key']
-    address = request.form.get('address', '')
-    
-    # Placeholder for your API request
-    # Replace this with your actual API call
-    try:
-        response = requests.get('https://public.chainalysis.com/api/v1/address/{}'.format(address), headers={'X-API-KEY': f'{api_key}'})
-        response.raise_for_status()
-        datas = response.json()["identifications"]
-        if datas:
-            for data in datas:
-                if data["category"] == "sanctions":
-                    description = data["description"]
-                    name = data["name"]
-                    url = data["url"]
-        # return render_template('index.html', data=data, address=address)
-        return render_template('index.html', address = address, data = data, description=description, name = name, url = url)
-    except requests.RequestException as e:
-        return render_template('index.html', error="Error fetching data: " + str(e))
+    addresses = request.form.get('address', '')
+    address_list = [address.strip() for address in addresses.split(',')]
+
+    results = []
+    for address in address_list:
+        try:
+            response = requests.get(f'https://public.chainalysis.com/api/v1/address/{address}', headers={'X-API-KEY': api_key})
+            response.raise_for_status()
+            data = response.json()["identifications"]
+            if data:
+                for entry in data:
+                    if entry["category"] == "sanctions":
+                        results.append({
+                            'address': address,
+                            'name': entry["name"],
+                            'description': entry["description"],
+                            'url': entry.get("url", ""),
+                            'raw': entry
+                        })
+        except requests.RequestException as e:
+            results.append({'address': address, 'error': f"Error fetching data: {str(e)}"})
+
+    return render_template('index.html', results=results)
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
-# @app.route('/index', methods=['GET', 'POST'])
-# def index():
-#     response_text = ""
-#     if request.method == 'POST':
-#         address = request.form['address']
-#         # Placeholder for the actual API request using the address
-#         # response = requests.get(f'http://api.example.com/data?address={address}&apikey={api_key}')
-#         # response_text = response.text  # This should be the text you want to display
-#         response_text = f"Received address: {address}"  # Simulated response
-
-#     return render_template('index.html', response_text=response_text)
+    app.run(host='0.0.0.0')
